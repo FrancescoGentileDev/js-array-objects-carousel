@@ -41,34 +41,41 @@ const images = [
         description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et temporibus voluptatum suscipit tempore aliquid deleniti aut veniam.'
     },
 ];
+let direction = "right";
 console.log(images);
-
-
-
-
+let idInterval;
 let activeIndex = 0;
 buildCarousel(images, activeIndex);
-
-let idInterval = setInterval(moveCarouselForward, CHANGE_IMAGE_DELAY * 1000);
-
 const leftArrowButton = document.getElementById('left-arrow');
 const rightArrowButton = document.getElementById('right-arrow');
+const invertArrow = document.getElementById("invert-arrow")
 
 leftArrowButton.addEventListener('click', moveCarouselPrevious);
-
-
 rightArrowButton.addEventListener('click', moveCarouselForward);
 
+invertArrow.addEventListener("click", toggleDirection)
 
-
-
+function toggleDirection(change) {
+    console.log(change)
+    if(change)
+    direction = direction === "right" ? "left" : "right"
+    console.log(direction)
+    clearInterval(idInterval)
+    if (direction === "right") {
+        idInterval = setInterval(moveCarouselForward, CHANGE_IMAGE_DELAY * 1000);
+    }
+    else {
+        idInterval = setInterval(moveCarouselPrevious, CHANGE_IMAGE_DELAY * 1000);
+    }
+}
+toggleDirection()
 
 function moveCarouselForward(){
     clearInterval(idInterval)
     // se l'indice si trova in fondo allora lo riposizione all'inizio dell'array
     activeIndex = activeIndex < images.length -1 ? activeIndex +1 : 0 ;
     buildCarousel(images, activeIndex);
-    idInterval = setInterval(moveCarouselForward, CHANGE_IMAGE_DELAY * 1000);
+    toggleDirection()
 }
 
 function moveCarouselPrevious(){
@@ -76,7 +83,7 @@ function moveCarouselPrevious(){
     // se l'indice è in prima posizione si valorizza all'ultima posizione dell'array
     activeIndex = activeIndex > 0 ? activeIndex -1 : images.length -1 ;
     buildCarousel(images, activeIndex);
-    idInterval = setInterval(moveCarouselForward, CHANGE_IMAGE_DELAY * 1000);
+    toggleDirection()
 }
 
 
@@ -86,7 +93,6 @@ function buildCarousel(urls, activeIndex){
     let content = '';
     for (element in urls) {
         const url = urls[element].url;
-        console.log(element, activeIndex)
         const imageClass = parseInt(element) === activeIndex ? 'carousel-img active' : 'carousel-img'
         content += `<img class="${imageClass}" src="${url}" alt="${url}" />`;
     }
